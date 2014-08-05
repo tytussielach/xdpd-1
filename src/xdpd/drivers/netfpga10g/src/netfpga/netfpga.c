@@ -143,7 +143,7 @@ rofl_result_t netfpga_dump_wildcard_hw_entries(){
 
 //Specific add command for wildcard entries
 static rofl_result_t netfpga_add_entry_hw(netfpga_flow_entry_t* entry){
-	ROFL_DEBUG("\n  %s : % d  netfpga_add_entry_hw  \n ", __FILE__,__LINE__);
+	//ROFL_DEBUG("\n  %s : % d  netfpga_add_entry_hw  \n ", __FILE__,__LINE__);
 	unsigned int i;
 	uint32_t* aux;
 	
@@ -152,7 +152,7 @@ static rofl_result_t netfpga_add_entry_hw(netfpga_flow_entry_t* entry){
 
 	//Set Row address
 	if(entry->type == NETFPGA_FE_FIXED ){
-		ROFL_DEBUG("\n  %s : % d  FIXED ENTRY  \n ", __FILE__,__LINE__);
+	//	ROFL_DEBUG("\n  %s : % d  FIXED ENTRY  \n ", __FILE__,__LINE__);
 		
 		if(netfpga_write_reg(nfpga, NETFPGA_OF_BASE_ADDR_REG, NETFPGA_EXACT_BASE + entry->hw_pos) != ROFL_SUCCESS)//NETFPGA_EXACT_BASE			0x0000
 			return ROFL_FAILURE;
