@@ -101,7 +101,7 @@ netfpga_flow_entry_t* netfpga_init_flow_entry(){
 
 	//Allocate stats	
 	entry->stats = malloc(sizeof(netfpga_flow_entry_stats_t));
-	if(!entry->actions){
+	if(!entry->stats){
 		free(entry->matches);
 		free(entry->masks);
 		free(entry->actions);
@@ -111,12 +111,12 @@ netfpga_flow_entry_t* netfpga_init_flow_entry(){
 
 
 	//Init all	
-	memset(entry->matches, 0, sizeof(*(entry->matches)));
-	memset(entry->masks, 0, sizeof(*(entry->masks)));
-	memset(entry->actions, 0, sizeof(*(entry->actions)));
-	memset(entry->stats, 0, sizeof(*(entry->stats)));
+	memset(entry->matches, 	0, sizeof(*(entry->matches)));
+	memset(entry->masks, 	0, sizeof(*(entry->masks)));
+	memset(entry->actions, 	0, sizeof(*(entry->actions)));
+	memset(entry->stats, 	0, sizeof(*(entry->stats)));
 
-	ROFL_DEBUG("size of entry: %d",sizeof(entry));
+//	ROFL_DEBUG("size of entry: %d",sizeof(entry));
 	
 	return entry;
 }
@@ -131,6 +131,7 @@ void netfpga_destroy_flow_entry(netfpga_flow_entry_t* entry){
 	free(entry->matches);
 	free(entry->masks);
 	free(entry->actions);
+	free(entry->stats);
 	free(entry);
 }
 
