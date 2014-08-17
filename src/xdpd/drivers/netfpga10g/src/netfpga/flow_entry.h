@@ -128,10 +128,11 @@ typedef struct netfpga_flow_entry{
 	//Actions	
 	netfpga_flow_entry_actions_t* actions;
 
+	//HW specific stats state
+	netfpga_flow_entry_stats_t* stats;
+	
 	//Reference back to the sw pipeline entry
 	of1x_flow_entry_t* ref_back;
-
-	netfpga_flow_entry_stats_t* stats;
 
 }netfpga_flow_entry_t;
 

@@ -9,6 +9,7 @@ rofl_result_t netfpga_update_entry_stats(of1x_flow_entry_t* entry){
 	netfpga_device_t* nfpga= netfpga_get();
 	netfpga_flow_entry_t* hw_entry;
 	netfpga_flow_entry_stats_t stats;
+	netfpga_flow_entry_stats_t old_stats;
 
 	if(!entry)
 		return ROFL_FAILURE;
@@ -24,6 +25,7 @@ rofl_result_t netfpga_update_entry_stats(of1x_flow_entry_t* entry){
 
 	//Clear stats -> Really necessary?
 	memset(&stats,0,sizeof(stats));
+	memset(&old_stats,0,sizeof(old_stats));
 
 	//Write command
 	if( hw_entry->type == NETFPGA_FE_WILDCARDED )
@@ -38,20 +40,19 @@ rofl_result_t netfpga_update_entry_stats(of1x_flow_entry_t* entry){
 	//Wait for the netfpga to be ready (again!)
 	netfpga_wait_reg_ready(nfpga);
 
+	old_stats.pkt_counter = entry->stats.packet_count ;  
+	old_stats.byte_counter = entry->stats.byte_count ;  
+
+
 	//Now read and fill
 	aux = (uint32_t*)&stats;
 	netfpga_read_reg(nfpga, NETFPGA_OF_STATS_BASE_REG,aux);
 	netfpga_read_reg(nfpga, NETFPGA_OF_STATS_BASE_REG+1,(aux+1));
 
-	//Update main entry and return
-/*struct nf2_of_counters {
-uint32_t pkt_count:25; ->correction by shiftiing
-uint8_t last_seen:7; -> ignore
-uint32_t byte_count;
-};
-*/
-	entry->stats.packet_count = stats.pkt_counter>>7;  
-	entry->stats.byte_count = stats.byte_counter;  
+	
+
+	entry->stats.packet_count += stats.pkt_counter - old_stats.pkt_counter;  
+	entry->stats.byte_count += stats.byte_counter - old_stats.byte_counter;  
 	//ROFL_DEBUG("\n entry stats: %x, %x",stats.pkt_counter,stats.byte_counter );
 
 
