@@ -1,6 +1,7 @@
 #include "stats.h"
 #include "regs.h"
 #include "flow_entry.h"
+#include <../peline-imp/atomic_operations.c>
 
 
 rofl_result_t netfpga_update_entry_stats(of1x_flow_entry_t* entry){
@@ -49,10 +50,15 @@ rofl_result_t netfpga_update_entry_stats(of1x_flow_entry_t* entry){
 	netfpga_read_reg(nfpga, NETFPGA_OF_STATS_BASE_REG,aux);
 	netfpga_read_reg(nfpga, NETFPGA_OF_STATS_BASE_REG+1,(aux+1));
 
-	
 
-	entry->stats.packet_count += stats.pkt_counter - old_stats.pkt_counter;  
-	entry->stats.byte_count += stats.byte_counter - old_stats.byte_counter;  
+    
+	platform_mutex_t* mutex=entry->table[0].mutex;
+	
+	
+	platform_atomic_add32(entry->stats.packet_count, (stats.pkt_counter - old_stats.pkt_counter), mutex);
+	//entry->stats.packet_count += stats.pkt_counter - old_stats.pkt_counter;  
+	platform_atomic_add32(entry->stats.byte_count, (stats.byte_counter - old_stats.byte_counter), mutex);
+	//entry->stats.byte_count += (stats.byte_counter - old_stats.byte_counter);  
 	//ROFL_DEBUG("\n entry stats: %x, %x",stats.pkt_counter,stats.byte_counter );
 
 
